@@ -152,7 +152,7 @@ public class DSPriorityQueue<T extends Comparable<? super T>> implements DSQueue
     private void siftUp(int idx, T t) {
         while(idx > 0) {
             int parent = (idx - 1) / 2;
-            if(comparator.compare(t, (T) elements[parent]) >= 0)
+            if(comparator.compare(t, (T) elements[parent]) > 0)
                 break;
             swap(idx, parent);
             idx = parent;
@@ -166,9 +166,9 @@ public class DSPriorityQueue<T extends Comparable<? super T>> implements DSQueue
             int left = 2 * idx + 1;
             int right= 2 * idx + 2;
             int child = left;
-            if(right < size && (comparator.compare((T) elements[right], (T) elements[left]) <= 0))
+            if(right < size && (comparator.compare((T) elements[right], (T) elements[left]) < 0))
                 child = right;
-            if(comparator.compare(t, (T) elements[child]) <= 0)
+            if(comparator.compare(t, (T) elements[child]) < 0)
                 break;
             swap(idx, child);
             idx = child;

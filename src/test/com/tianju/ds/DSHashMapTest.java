@@ -46,7 +46,6 @@ public class DSHashMapTest {
 
     @Test
     public void sameHashCodeTest() {
-        System.out.println("FB".hashCode() + " " + "Ea".hashCode());
         DSHashMap<String, String> dsHashMap = new DSHashMap<>();
         dsHashMap.put("FB", "FB");
         dsHashMap.put("Ea", "Ea");
