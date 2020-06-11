@@ -19,26 +19,30 @@ public class MergeSort {
 
     private static<T> void divideHelper(T[] elements, int left, int right, Comparator<? super T> c) {
         if(right <= left) return;
+        // when the chunk size less than or equals to 10, use simple insertion sort
+        if(right - left <= 10) {
+            SimpleSort.insertionSort(elements, c, left, right);
+            return;
+        }
         int mid = left + (right - left) / 2;
         divideHelper(elements, left, mid, c);
         divideHelper(elements, mid + 1, right, c);
         mergeHelper(elements, left, mid, right, c);
     }
 
-    @SuppressWarnings("unchecked")
     private static<T> void mergeHelper(T[] elements, int left, int mid, int right, Comparator<? super T> c) {
         T[] l = Arrays.copyOfRange(elements, left, mid + 1);
         T[] r = Arrays.copyOfRange(elements, mid+1, right + 1);
-        int idx = left, i = 0, j = 0;
-        while(idx <= right) {
+        int i = 0, j = 0;
+        while(left <= right) {
             if(i >= l.length) {
-                elements[idx++] = r[j++];
+                elements[left++] = r[j++];
             } else if (j >= r.length) {
-                elements[idx++] = l[i++];
+                elements[left++] = l[i++];
             } else if(c.compare(l[i], r[j]) < 0){
-                elements[idx++] = l[i++];
+                elements[left++] = l[i++];
             } else {
-                elements[idx++] = r[j++];
+                elements[left++] = r[j++];
             }
         }
     }

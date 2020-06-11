@@ -8,45 +8,48 @@ import java.util.Comparator;
  */
 public class HeapSort {
 
-    public static<T> void heapSort(Object[] elements) {
+    public static<T extends Comparable<? super T>> void heapSort(T[] elements) {
         heapSort(elements, Comparator.naturalOrder());
     }
 
-    public static <T> void heapSort(Object[] elements, Comparator<? super T> comparator) {
-        int len = elements.length, unsortedLength = len;
+    public static <T> void heapSort(T[] elements, Comparator<? super T> comparator) {
+        int len = elements.length;
 
         // build heap first
-        for(int i = len / 2 - 1; i >= 0; i--)
-            siftDown(elements, comparator, i, len, elements[i]);
+        for(int i = (len >> 1) - 1; i >= 0; i--)
+            siftDown(elements, comparator, i, len);
 
-        // still element not sorted
-        while(unsortedLength > 0) {
-            // put the Min/Max element at the end of array
-            swap(elements, 0, --unsortedLength);
+        // there is still element not sorted
+        while(len > 0) {
+            // put the Min/Max element at the end of array, and decrease the unsorted length
+            swap(elements, 0, --len);
             // siftDown the first element
-            siftDown(elements, comparator, 0, unsortedLength, elements[0]);
+            siftDown(elements, comparator, 0, len);
         }
-
-        // reverse array order
-        for(int i = 0; i < elements.length / 2; i++)
-            swap(elements, i, elements.length - i - 1);
     }
 
-    private static void swap(Object[] elements, int idx1, int idx2) {
-        Object temp = elements[idx1];
+    private static<T> void swap(T[] elements, int idx1, int idx2) {
+        T temp = elements[idx1];
         elements[idx1] = elements[idx2];
         elements[idx2] = temp;
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T> void siftDown(Object[] elements, Comparator<? super T> comparator, int idx, int len, Object ele) {
-        T t = (T) ele;
-        int half = len / 2;
+    /**
+     *
+     * @param elements: array need to be sorted
+     * @param comparator:
+     * @param idx: Index in the array. In Heapify process, it decreases from size/2 - 1 to 0. In sort process, it's always 0.
+     * @param len: Unsorted length.
+     * @param <T>: Generic Type
+     */
+    private static <T> void siftDown(T[] elements, Comparator<? super T> comparator, int idx, int len) {
+        T t = elements[idx];
+        int half = len >> 1;
         while(idx < half) {
-            int left = 2 * idx + 1, right = 2 * idx + 2, child = left;
-            if(right < len && comparator.compare((T) elements[right], (T) elements[left]) < 0)
+            int left = (idx << 1) + 1, right = (idx << 1) + 2, child = left;
+            if(right < len && comparator.compare(elements[left], elements[right]) < 0)
                 child = right;
-            if(comparator.compare(t, (T) elements[child]) < 0)
+            if(comparator.compare(t, elements[child]) > 0)
                 break;
             swap(elements, idx, child);
             idx = child;

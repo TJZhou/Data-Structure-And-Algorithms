@@ -19,9 +19,12 @@ public class QuickSort {
     private static <T> void partitionHelper(T[] elements, int left, int right, Comparator<? super T> c) {
         if(left >= right)
             return;
+        // when the chunk size less than or equals to 10, use simple insertion sort
+        if(right - left <= 10) {
+            SimpleSort.insertionSort(elements, c, left, right);
+            return;
+        }
         int l = left, r = right, pivot = l;
-//        Random ra = new Random();
-//        int pivot = ra.nextInt(r - l + 1) + l;
         T p = elements[pivot];
         while(l <= r) {
             while(c.compare(elements[l], p) < 0)

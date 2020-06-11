@@ -1,6 +1,5 @@
 package com.tianju.sort;
 
-import java.util.Arrays;
 import java.util.Comparator;
 
 /**
@@ -14,8 +13,17 @@ public class SimpleSort {
         insertionSort(elements, c);
     }
 
-    public static <T> void insertionSort(T[] elements, Comparator<? super T> c) {
-        for(int i = 0; i < elements.length; i++) {
+    public static<T> void insertionSort(T[] elements, Comparator<? super T> c) {
+        insertionSort(elements, c, 0, elements.length - 1);
+    }
+
+    public static<T extends Comparable<? super T>> void insertionSort(T[] elements, int left, int right) {
+        Comparator<T> c = Comparator.naturalOrder();
+        insertionSort(elements, c, left, right);
+    }
+
+    public static <T> void insertionSort(T[] elements, Comparator<? super T> c, int left, int right) {
+        for(int i = left; i <= right; i++) {
             int lo = 0, hi = i;
             T ele = elements[i];
             // binary search for insertion index

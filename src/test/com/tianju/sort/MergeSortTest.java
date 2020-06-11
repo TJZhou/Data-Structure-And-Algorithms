@@ -13,9 +13,9 @@ import java.util.Collections;
 public class MergeSortTest {
     @Test
     public void mergeSortTest() {
-        Double[] testArr1 = new Double[1000000];
+        Double[] testArr1 = new Double[10000000];
         Arrays.fill(testArr1, Math.random() * 100000);
-        Double[] testArr2 = Arrays.copyOf(testArr1, 1000000);
+        Double[] testArr2 = Arrays.copyOf(testArr1, 10000000);
 
         Long start = System.currentTimeMillis();
         MergeSort.mergeSort(testArr1);
