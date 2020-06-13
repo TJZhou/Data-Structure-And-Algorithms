@@ -19,11 +19,6 @@ public class MergeSort {
 
     private static<T> void divideHelper(T[] elements, int left, int right, Comparator<? super T> c) {
         if(right <= left) return;
-        // when the chunk size less than or equals to 10, use simple insertion sort
-        if(right - left <= 10) {
-            SimpleSort.insertionSort(elements, c, left, right);
-            return;
-        }
         int mid = left + (right - left) / 2;
         divideHelper(elements, left, mid, c);
         divideHelper(elements, mid + 1, right, c);

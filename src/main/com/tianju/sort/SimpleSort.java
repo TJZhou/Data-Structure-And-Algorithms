@@ -1,5 +1,7 @@
 package com.tianju.sort;
 
+import com.tianju.util.Util;
+
 import java.util.Comparator;
 
 /**
@@ -7,6 +9,23 @@ import java.util.Comparator;
  * Jun 8, 2020
  */
 public class SimpleSort {
+
+    /**
+     * @param elements: array to be sorted
+     * @param upperBound: the largest element in the array
+     */
+    public static void countSort(int[] elements, int upperBound) {
+        int[] aux = new int[upperBound + 1];
+        for(int e : elements)
+            aux[e]++;
+        int idx = 0;
+        for(int i = 0; i <= upperBound; i++) {
+            while(aux[i]-- > 0)
+                elements[idx++] = i;
+            if(idx == elements.length)
+                break;
+        }
+    }
 
     public static<T extends Comparable<? super T>> void insertionSort(T[] elements) {
         Comparator<T> c = Comparator.naturalOrder();
@@ -50,7 +69,7 @@ public class SimpleSort {
         for(int i = 0; i < elements.length; i++) {
             for(int j = 0; j < elements.length - i - 1; j++) {
                 if(c.compare(elements[j], elements[j+1]) > 0)
-                    swap(elements, j, j+1);
+                    Util.swap(elements, j, j+1);
             }
         }
     }
@@ -69,13 +88,7 @@ public class SimpleSort {
                     idx = j;
                 }
             }
-            swap(elements, i, idx);
+            Util.swap(elements, i, idx);
         }
-    }
-
-    private static<T> void swap(T[] elements, int idx1, int idx2) {
-        T temp = elements[idx1];
-        elements[idx1] = elements[idx2];
-        elements[idx2] = temp;
     }
 }

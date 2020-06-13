@@ -13,9 +13,10 @@ import java.util.Collections;
 public class QuickSortTest {
     @Test
     public void quickSortTest() {
-        Double[] testArr1 = new Double[10000000];
-        Arrays.fill(testArr1, Math.random() * 100000);
-        Double[] testArr2 = Arrays.copyOf(testArr1, 10000000);
+        Double[] testArr1 = new Double[1000000];
+        for(int i = 0; i < 1000000; i++)
+            testArr1[i] = Math.random() * 100000;
+        Double[] testArr2 = Arrays.copyOf(testArr1, 1000000);
 
         Long start = System.currentTimeMillis();
         QuickSort.quickSort(testArr1);
@@ -24,6 +25,10 @@ public class QuickSortTest {
         Arrays.sort(testArr2);
         Assertions.assertArrayEquals(testArr1, testArr2);
 
+        testArr1 = new Double[1000000];
+        for(int i = 0; i < 1000000; i++)
+            testArr1[i] = Math.random() * 100000;
+        testArr2 = Arrays.copyOf(testArr1, 1000000);
         QuickSort.quickSort(testArr1, Collections.reverseOrder());
         Arrays.sort(testArr2, Collections.reverseOrder());
         Assertions.assertArrayEquals(testArr1, testArr2);

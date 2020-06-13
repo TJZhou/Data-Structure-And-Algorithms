@@ -13,9 +13,10 @@ import java.util.Collections;
 public class HeapSortTest {
     @Test
     public void heapSortTest() {
-        Double[] testArr1 = new Double[10000000];
-        Arrays.fill(testArr1, Math.random() * 100000);
-        Double[] testArr2 = Arrays.copyOf(testArr1, 10000000);
+        Double[] testArr1 = new Double[1000000];
+        for(int i = 0; i < 1000000; i++)
+            testArr1[i] = Math.random() * 100000;
+        Double[] testArr2 = Arrays.copyOf(testArr1, 1000000);
 
         Long start = System.currentTimeMillis();
         HeapSort.heapSort(testArr1);

@@ -1,5 +1,7 @@
 package com.tianju.sort;
 
+import com.tianju.util.Util;
+
 import java.util.Comparator;
 
 /**
@@ -22,16 +24,10 @@ public class HeapSort {
         // there is still element not sorted
         while(len > 0) {
             // put the Min/Max element at the end of array, and decrease the unsorted length
-            swap(elements, 0, --len);
+            Util.swap(elements, 0, --len);
             // siftDown the first element
             siftDown(elements, comparator, 0, len);
         }
-    }
-
-    private static<T> void swap(T[] elements, int idx1, int idx2) {
-        T temp = elements[idx1];
-        elements[idx1] = elements[idx2];
-        elements[idx2] = temp;
     }
 
     /**
@@ -51,7 +47,7 @@ public class HeapSort {
                 child = right;
             if(comparator.compare(t, elements[child]) > 0)
                 break;
-            swap(elements, idx, child);
+            Util.swap(elements, idx, child);
             idx = child;
         }
     }

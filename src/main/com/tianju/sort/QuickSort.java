@@ -1,5 +1,7 @@
 package com.tianju.sort;
 
+import com.tianju.util.Util;
+
 import java.util.Comparator;
 
 /**
@@ -19,11 +21,6 @@ public class QuickSort {
     private static <T> void partitionHelper(T[] elements, int left, int right, Comparator<? super T> c) {
         if(left >= right)
             return;
-        // when the chunk size less than or equals to 10, use simple insertion sort
-        if(right - left <= 10) {
-            SimpleSort.insertionSort(elements, c, left, right);
-            return;
-        }
         int l = left, r = right, pivot = l;
         T p = elements[pivot];
         while(l <= r) {
@@ -32,17 +29,11 @@ public class QuickSort {
             while(c.compare(elements[r], p) > 0)
                 r--;
             if(l > r) break;
-            swap(elements, l, r);
+            Util.swap(elements, l, r);
             l++;
             r--;
         }
         partitionHelper(elements, left, r, c);
         partitionHelper(elements, l, right, c);
-    }
-
-    private static<T> void swap(T[] elements, int idx1, int idx2) {
-        T temp = elements[idx1];
-        elements[idx1] = elements[idx2];
-        elements[idx2] = temp;
     }
 }
