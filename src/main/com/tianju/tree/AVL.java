@@ -3,6 +3,8 @@ package com.tianju.tree;
 /**
  * Tianju Zhou
  * June 13, 2020
+ * Built balanced AVL tree based on BST.
+ * Add rotate and rebalance function
  * refer to: https://www.baeldung.com/java-avl-trees
  */
 public class AVL<K extends Comparable<K>,V> extends BST<K,V> {
