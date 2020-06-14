@@ -4,125 +4,119 @@ package com.tianju.tree;
  * Tianju Zhou
  * Jun 5, 2020
  */
-public class BST<T extends Comparable<T>> extends BinaryTree<T> {
+public class BST<K extends Comparable<K>, V> extends BinaryTree<K, V> {
 
     public BST() {
         super();
     }
 
-    public BST(T val) {
-        super(val);
+    public BST(K key, V val) {
+        super(key, val);
     }
 
-    public boolean search(T t) {
-        TreeNode<T> node = root;
-        return searchHelper(node, t);
+    public V search(K key) {
+        TreeNode<K, V> node = root;
+        return searchHelper(node, key);
     }
 
-    private boolean searchHelper(TreeNode<T> n, T t) {
-        if(n == null) {
-            return false;
-        }
-        if(t.compareTo(n.val) == 0) {
-            return true;
-        } else if(t.compareTo(n.val) < 0) {
-            return searchHelper(n.left, t);
+    private V searchHelper(TreeNode<K, V> n, K key) {
+        if(n == null) return null;
+        if(key.compareTo(n.key) == 0) {
+            return n.val;
+        } else if(key.compareTo(n.key) < 0) {
+            return searchHelper(n.left, key);
         } else {
-            return searchHelper(n.right, t);
+            return searchHelper(n.right, key);
         }
     }
 
-    // Only return true if element doesn't exist in the original BST
-    public boolean insert(T t) {
-        size++;
+    // Return the inserted node. If exists, update original val
+    public TreeNode<K, V> insert(K key, V val) {
         if(root == null) {
-            root = new TreeNode<T>(t, null);
-            return true;
+            size++;
+            root = new TreeNode<>(key, val);
+            updateHeight(root);
+            return root;
         }
-        TreeNode<T> node = root;
-        return insertHelper(node, t);
+        TreeNode<K, V> node = root;
+        return insertHelper(node, key, val);
     }
 
-    private boolean insertHelper(TreeNode<T> n, T t) {
-        if(t.compareTo(n.val) < 0) {
-            if(n.left == null) {
-                n.addLeft(t);
-                return true;
-            } else {
-                return insertHelper(n.left, t);
-            }
-        } else if(t.compareTo(n.val) > 0){
-            if(n.right == null) {
-                n.addRight(t);
-                return true;
-            } else {
-                return insertHelper(n.right, t);
-            }
-        } else {
-            // elements already exists. Do not update size
-            size--;
-            return false;
-        }
-    }
-
-    // only return true if element t exists in BST
-    public boolean delete(T t) {
-        TreeNode<T> node = root;
-        int prevSize = size;
-        root = deleteHelper(node, t);
-        return prevSize != size;
-    }
-
-    private TreeNode<T> deleteHelper(TreeNode<T> n, T t) {
+    protected TreeNode<K, V> insertHelper(TreeNode<K, V> n, K key, V val) {
         if(n == null) {
-            return null;
-        }
-        if(t.compareTo(n.val) < 0) {
-            n.left = deleteHelper(n.left, t);
-        } else if(t.compareTo(n.val) > 0) {
-            n.right = deleteHelper(n.right, t);
+            size++;
+            return new TreeNode<>(key, val);
+        } else if(key.compareTo(n.key) < 0) {
+            n.left = insertHelper(n.left, key, val);
+        } else if(key.compareTo(n.key) > 0) {
+            n.right = insertHelper(n.right, key, val);
         } else {
-            if(n.left != null || n.right != null || n == root) size--;
-            if(n.left == null && n.right == null) {
-                return null;
-            } else if(n.left == null) {
-                // change parent node
-                n.right.parent = n.parent;
-                return n.right;
-            } else if(n.right == null) {
-                n.left.parent = n.parent;
-                return n.left;
-            } else {
-                n.val = min(n.right);
-                n.right = deleteHelper(n.right, n.val);
-            }
+            n.val = val;
         }
+        updateHeight(n);
         return n;
     }
 
-    public T min() {
-        TreeNode<T> node = root;
-        return min(node);
+    // only return true if element t exists in BST
+    public boolean delete(K key) {
+        TreeNode<K, V> node = root;
+        int prevSize = size;
+        root = deleteHelper(node, key);
+        return prevSize != size;
     }
 
-    private T min(TreeNode<T> n) {
-        if(n == null) throw new NullPointerException("Node is empty");
-        while(n.left != null) {
+    protected TreeNode<K, V> deleteHelper(TreeNode<K, V> n, K key) {
+        if(n == null) return null;
+        if(key.compareTo(n.key) < 0) {
+            n.left = deleteHelper(n.left, key);
+        } else if(key.compareTo(n.key) > 0) {
+            n.right = deleteHelper(n.right, key);
+        } else {
+            if(n.left == null || n.right == null) {
+                size--;
+                n = (n.left == null) ? n.right : n.left;
+            } else {
+                // assign the <K,V> of successor node to the root node
+                TreeNode<K, V> successor = successor(n);
+                n.val = successor.val;
+                n.key = successor.key;
+                // Then delete the successor
+                n.right = deleteHelper(n.right, successor.key);
+            }
+        }
+        // if n is the successor, then n is null coz the successor has been deleted
+        if(n != null)
+            updateHeight(n);
+        return n;
+    }
+
+    public TreeNode<K, V> min() {
+        TreeNode<K, V> n = root;
+        while(n.left != null)
             n = n.left;
-        }
-        return n.val;
+        return n;
     }
 
-    public T max() {
-        TreeNode<T> node = root;
-        return max(node);
-    }
-
-    private T max(TreeNode<T> n) {
-        if(n == null) throw new NullPointerException("Node is empty");
-        while(n.right != null) {
+    public TreeNode<K, V> max() {
+        TreeNode<K, V> n = root;
+        while(n.right != null)
             n = n.right;
-        }
-        return n.val;
+        return n;
+    }
+
+    public TreeNode<K, V> predecessor(TreeNode<K, V> n) {
+        if(n == null) throw new NullPointerException("Node is empty");
+        n = n.left;
+        while(n != null && n.right != null)
+            n = n.right;
+        return n;
+    }
+
+    public TreeNode<K, V> successor(TreeNode<K, V> n) {
+        if(n == null) throw new NullPointerException("Node is empty");
+        n = n.right;
+        while(n != null && n.left != null)
+            n = n.left;
+        return n;
     }
 }
