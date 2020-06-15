@@ -50,17 +50,74 @@ public abstract class Graph<K,V> {
         return adjacencyList.get(node);
     }
 
-    public void bfs(Node<K, V> node) {
+    public boolean containsCycle() {
         Set<Node<K, V>> visited = new HashSet<>();
+        for(Node<K, V> n : vertices) {
+            if(!visited.contains(n)) {
+                visited.add(n);
+                Set<Node<K, V>> tree = new HashSet<>();
+                if(cycleDetect(tree, n, null))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean cycleDetect(Set<Node<K, V>> visited, Node<K, V> n, Node<K, V> parent) {
+        if(visited.contains(n))
+            return true;
+        visited.add(n);
+        for(Node<K,V> neighbor: adjacencyList.get(n)) {
+            if(cycleDetect(visited, neighbor, n))
+                return true;
+        }
+        return false;
+    }
+
+    public List<Node<K, V>> dfs(Node<K, V> node) {
+        Set<Node<K, V>> visited = new HashSet<>();
+        // dfs result
+        List<Node<K, V>> res = new ArrayList<>();
+        dfsHelper(res, visited, node);
+        // make sure all disconnected node has also been visited
+        for(Node<K, V> n : vertices) {
+            if(!visited.contains(n))
+                dfsHelper(res, visited, n);
+        }
+        return res;
+    }
+
+    private void dfsHelper(List<Node<K, V>> res, Set<Node<K, V>> visited, Node<K, V> n) {
+        if(visited.contains(n))
+            return;
+        visited.add(n);
+        res.add(n);
+        for(Node<K,V> neighbor: adjacencyList.get(n))
+            dfsHelper(res, visited, neighbor);
+    }
+
+    public List<Node<K, V>>  bfs(Node<K, V> node) {
+        Set<Node<K, V>> visited = new HashSet<>();
+        // bfs result
+        List<Node<K, V>> res = new ArrayList<>();
+        bfsHelper(res, visited, node);
+        // make sure all disconnected node has also been visited
+        for(Node<K, V> n : vertices) {
+            if(!visited.contains(n))
+                bfsHelper(res, visited, n);
+        }
+        return res;
+    }
+
+    private void bfsHelper(List<Node<K, V>> res, Set<Node<K, V>> visited,  Node<K, V> node) {
         Queue<Node<K, V>> q = new LinkedList<>();
         q.offer(node);
         visited.add(node);
         while(!q.isEmpty()) {
             int size = q.size();
-            System.out.print("\nBFS: ");
             for(int i = 0; i < size; i++) {
                 Node<K, V> n = q.poll();
-                System.out.print(n.val + " ");
+                res.add(n);
                 for(Node<K,V> neighbor: adjacencyList.get(n)) {
                     if(visited.contains(neighbor)) continue;
                     q.offer(neighbor);

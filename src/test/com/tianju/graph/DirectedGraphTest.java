@@ -13,12 +13,12 @@ public class DirectedGraphTest {
     public void directedGraphTest() {
         Graph<Integer, Integer> g = new DirectedGraph<>();
 
-        Node<Integer, Integer> n1 = new Node<>(1,1);
-        Node<Integer, Integer> n2 = new Node<>(2,2);
-        Node<Integer, Integer> n3 = new Node<>(3,3);
-        Node<Integer, Integer> n4 = new Node<>(4,4);
-        Node<Integer, Integer> n5 = new Node<>(5,5);
-        Node<Integer, Integer> n6 = new Node<>(6,6);
+        Node<Integer, Integer> n1 = new Node<>(1, 1);
+        Node<Integer, Integer> n2 = new Node<>(2, 2);
+        Node<Integer, Integer> n3 = new Node<>(3, 3);
+        Node<Integer, Integer> n4 = new Node<>(4, 4);
+        Node<Integer, Integer> n5 = new Node<>(5, 5);
+        Node<Integer, Integer> n6 = new Node<>(6, 6);
 
         g.addVertex(n1);
         g.addVertex(n2);
@@ -39,17 +39,17 @@ public class DirectedGraphTest {
         Assertions.assertEquals(g.edgeNum(), 7);
         Assertions.assertEquals(g.getNeighbors(n1).get(0).val, 2);
         Assertions.assertEquals(g.getNeighbors(n2).get(0).val, 3);
-        g.bfs(n1);
+        // Assertions.assertArrayEquals(g.bfs(n2).toArray(), new Node[]{n2, n3, n5, n6, n4, n1});
+        Assertions.assertFalse(g.containsCycle());
+
+        g.removeVertex(n3);
+        System.out.println(g.containsCycle());
+        Assertions.assertFalse(g.containsCycle());
 
         g.removeEdge(n1, n4);
-        g.removeVertex(n3);
         Assertions.assertEquals(g.vertexNum(), 5);
         Assertions.assertEquals(g.edgeNum(), 3);
-        // Although edge from n1 to n4 is removed. n3 is still in the graph. It's isolated
-        System.out.println("\nAfter remove. Source n4:");
-        g.bfs(n4);
-
-        System.out.println("\nAfter remove. Source n1:");
-        g.bfs(n1);
+        // Although edge from n1 to n4 is removed. n4 is still in the graph. It's isolated
+        // Assertions.assertArrayEquals(g.bfs(n2).toArray(), new Node[]{n2, n5, n6, n4, n1});
     }
 }
