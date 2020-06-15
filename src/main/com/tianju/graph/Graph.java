@@ -50,29 +50,6 @@ public abstract class Graph<K,V> {
         return adjacencyList.get(node);
     }
 
-    public boolean containsCycle() {
-        Set<Node<K, V>> visited = new HashSet<>();
-        for(Node<K, V> n : vertices) {
-            if(!visited.contains(n)) {
-                visited.add(n);
-                Set<Node<K, V>> tree = new HashSet<>();
-                if(cycleDetect(tree, n, null))
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean cycleDetect(Set<Node<K, V>> visited, Node<K, V> n, Node<K, V> parent) {
-        if(visited.contains(n))
-            return true;
-        visited.add(n);
-        for(Node<K,V> neighbor: adjacencyList.get(n)) {
-            if(cycleDetect(visited, neighbor, n))
-                return true;
-        }
-        return false;
-    }
 
     public List<Node<K, V>> dfs(Node<K, V> node) {
         Set<Node<K, V>> visited = new HashSet<>();
@@ -96,7 +73,7 @@ public abstract class Graph<K,V> {
             dfsHelper(res, visited, neighbor);
     }
 
-    public List<Node<K, V>>  bfs(Node<K, V> node) {
+    public List<Node<K, V>> bfs(Node<K, V> node) {
         Set<Node<K, V>> visited = new HashSet<>();
         // bfs result
         List<Node<K, V>> res = new ArrayList<>();
@@ -126,6 +103,8 @@ public abstract class Graph<K,V> {
             }
         }
     }
+
+    public abstract  boolean containsCycle();
 
     public abstract void addEdge(Node<K, V> from, Node<K, V> to);
 

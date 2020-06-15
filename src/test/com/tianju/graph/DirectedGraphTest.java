@@ -39,11 +39,11 @@ public class DirectedGraphTest {
         Assertions.assertEquals(g.edgeNum(), 7);
         Assertions.assertEquals(g.getNeighbors(n1).get(0).val, 2);
         Assertions.assertEquals(g.getNeighbors(n2).get(0).val, 3);
+        // coz we store nods in a set, so the visited order is not guaranteed
         // Assertions.assertArrayEquals(g.bfs(n2).toArray(), new Node[]{n2, n3, n5, n6, n4, n1});
         Assertions.assertFalse(g.containsCycle());
 
         g.removeVertex(n3);
-        System.out.println(g.containsCycle());
         Assertions.assertFalse(g.containsCycle());
 
         g.removeEdge(n1, n4);

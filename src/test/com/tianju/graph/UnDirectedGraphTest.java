@@ -40,10 +40,12 @@ public class UnDirectedGraphTest {
         Assertions.assertEquals(g.getNeighbors(n1).get(0).val, 2);
         Assertions.assertEquals(g.getNeighbors(n2).get(0).val, 1);
         Assertions.assertArrayEquals(g.bfs(n2).toArray(), new Node[]{n2, n1, n3, n5, n6, n4});
+        Assertions.assertTrue(g.containsCycle());
 
         // as the edges are undirected, once we add edge n1 - n4, we automatically create edge n4 - n1
         g.removeEdge(n4, n1);
         g.removeVertex(n3);
+        Assertions.assertFalse(g.containsCycle());
         Assertions.assertEquals(g.vertexNum(), 5);
         Assertions.assertEquals(g.edgeNum(), 3);
         Assertions.assertArrayEquals(g.bfs(n2).toArray(), new Node[]{n2, n1, n5, n6, n4});
