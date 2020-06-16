@@ -10,7 +10,7 @@ import java.util.Set;
  * @param <K> Key
  * @param <V> Value
  */
-public class DirectedGraph<K, V> extends Graph<K, V> {
+public class DirectedGraph<K, V, W> extends Graph<K, V, W> {
 
     public DirectedGraph() {
         super();
@@ -18,30 +18,30 @@ public class DirectedGraph<K, V> extends Graph<K, V> {
 
     public int edgeNum() {
         int sum = 0;
-        for(List<Node<K,V>> l : adjacencyList.values())
+        for(List<Edge<K, V, W>> l : adjacencyList.values())
             sum += l.size();
         return sum;
     }
 
-    public void addEdge(Node<K, V> from, Node<K, V> to) {
+    public void addEdge(Vertex<K, V> from, Vertex<K, V> to, W w) {
         if(!vertices.contains(from))
             addVertex(from);
         if(!vertices.contains(to))
             addVertex(to);
-        adjacencyList.get(from).add(to);
+        adjacencyList.get(from).add(new Edge<K, V, W>(from, to, w));
     }
 
-    public void removeEdge(Node<K, V> from, Node<K, V> to) {
-        adjacencyList.get(from).remove(to);
+    public void removeEdge(Vertex<K, V> from, Vertex<K, V> to) {
+        adjacencyList.get(from).removeIf(e -> e.to == to);
     }
 
     public boolean containsCycle() {
-        Set<Node<K, V>> notVisited = new HashSet<>(vertices);
-        Set<Node<K, V>> beingVisited = new HashSet<>();
-        Set<Node<K, V>> totallyVisited = new HashSet<>();
+        Set<Vertex<K, V>> notVisited = new HashSet<>(vertices);
+        Set<Vertex<K, V>> beingVisited = new HashSet<>();
+        Set<Vertex<K, V>> totallyVisited = new HashSet<>();
         while(notVisited.size() > 0) {
-            Node<K, V> node = notVisited.iterator().next();
-            if(cycleDetect(notVisited, beingVisited, totallyVisited, node))
+            Vertex<K, V> vertex = notVisited.iterator().next();
+            if(cycleDetect(notVisited, beingVisited, totallyVisited, vertex))
                 return true;
         }
         return false;
@@ -49,24 +49,24 @@ public class DirectedGraph<K, V> extends Graph<K, V> {
 
     /**
      * Refer to Tushar Roy: https://www.youtube.com/watch?v=rKQaZuoUR4M
-     * @param notVisited: nodes which have not been visited yet
-     * @param beingVisited: nodes currently are being visited
-     * @param totallyVisited: nodes which has already been visited
-     * @return true if there are cycles detected(node n in the beingVisited set)
+     * @param notVisited: vertices which have not been visited yet
+     * @param beingVisited: vertices currently are being visited
+     * @param totallyVisited: vertices which has already been visited
+     * @return true if there are cycles detected(vertices n in the beingVisited set)
      */
-    private boolean cycleDetect(Set<Node<K, V>> notVisited, Set<Node<K, V>> beingVisited, Set<Node<K, V>> totallyVisited, Node<K, V> n) {
-        notVisited.remove(n);
-        beingVisited.add(n);
-        for(Node<K, V> neighbor : adjacencyList.get(n)) {
-            if(totallyVisited.contains(n))
+    private boolean cycleDetect(Set<Vertex<K, V>> notVisited, Set<Vertex<K, V>> beingVisited, Set<Vertex<K, V>> totallyVisited, Vertex<K, V> v) {
+        notVisited.remove(v);
+        beingVisited.add(v);
+        for(Edge<K, V, W> e : adjacencyList.get(v)) {
+            if(totallyVisited.contains(e.to))
                 continue;
-            if(beingVisited.contains(neighbor))
+            if(beingVisited.contains(e.to))
                 return true;
-            if(cycleDetect(notVisited, beingVisited, totallyVisited, neighbor))
+            if(cycleDetect(notVisited, beingVisited, totallyVisited, e.to))
                 return true;
         }
-        beingVisited.remove(n);
-        totallyVisited.add(n);
+        beingVisited.remove(v);
+        totallyVisited.add(v);
         return false;
     }
 }

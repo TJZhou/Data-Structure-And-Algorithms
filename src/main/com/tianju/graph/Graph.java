@@ -6,13 +6,14 @@ import java.util.*;
 /**
  * Tianju Zhou
  * Jun 14, 2020
- * @param <K> Key
- * @param <V> Value
+ * @param <K> Vertex Key
+ * @param <V> Vertex Value
+ * @param <W> Edge Weight
  */
-public abstract class Graph<K,V> {
+public abstract class Graph<K, V, W> {
 
-    protected Set<Node<K, V>> vertices;
-    protected Map<Node<K, V>, List<Node<K, V>>> adjacencyList;
+    protected Set<Vertex<K, V>> vertices;
+    protected Map<Vertex<K, V>, List<Edge<K, V, W>>> adjacencyList;
 
     public Graph() {
         this.vertices = new HashSet<>();
@@ -25,80 +26,80 @@ public abstract class Graph<K,V> {
     
     public abstract int edgeNum();
 
-    public void addVertex(Node<K, V> node) {
-        vertices.add(node);
-        adjacencyList.put(node, new LinkedList<>());
+    public void addVertex(Vertex<K, V> vertex) {
+        vertices.add(vertex);
+        adjacencyList.put(vertex, new LinkedList<>());
     }
 
-    public void removeVertex(Node<K, V> node) {
-        vertices.remove(node);
-        adjacencyList.remove(node);
-        for(List<Node<K, V>> l : adjacencyList.values()) {
-            l.remove(node);
+    public void removeVertex(Vertex<K, V> vertex) {
+        vertices.remove(vertex);
+        adjacencyList.remove(vertex);
+        for(List<Edge<K, V, W>> l : adjacencyList.values()) {
+            l.removeIf(e -> e.to == vertex);
         }
     }
 
-    public Set<Node<K, V>> getVertices() {
+    public Set<Vertex<K, V>> getVertices() {
         return vertices;
     }
 
-    public Map<Node<K, V>, List<Node<K, V>>> getAdjacencyList() {
+    public Map<Vertex<K, V>, List<Edge<K, V, W>>> getAdjacencyList() {
         return adjacencyList;
     }
 
-    public List<Node<K, V>> getNeighbors(Node<K,V> node) {
-        return adjacencyList.get(node);
+    public List<Edge<K, V, W>> getNeighbors(Vertex<K,V> vertex) {
+        return adjacencyList.get(vertex);
     }
 
 
-    public List<Node<K, V>> dfs(Node<K, V> node) {
-        Set<Node<K, V>> visited = new HashSet<>();
+    public List<Vertex<K, V>> dfs(Vertex<K, V> vertex) {
+        Set<Vertex<K, V>> visited = new HashSet<>();
         // dfs result
-        List<Node<K, V>> res = new ArrayList<>();
-        dfsHelper(res, visited, node);
-        // make sure all disconnected node has also been visited
-        for(Node<K, V> n : vertices) {
-            if(!visited.contains(n))
-                dfsHelper(res, visited, n);
+        List<Vertex<K, V>> res = new ArrayList<>();
+        dfsHelper(res, visited, vertex);
+        // make sure all disconnected vertex has also been visited
+        for(Vertex<K, V> v : vertices) {
+            if(!visited.contains(v))
+                dfsHelper(res, visited, v);
         }
         return res;
     }
 
-    private void dfsHelper(List<Node<K, V>> res, Set<Node<K, V>> visited, Node<K, V> n) {
-        if(visited.contains(n))
+    private void dfsHelper(List<Vertex<K, V>> res, Set<Vertex<K, V>> visited, Vertex<K, V> v) {
+        if(visited.contains(v))
             return;
-        visited.add(n);
-        res.add(n);
-        for(Node<K,V> neighbor: adjacencyList.get(n))
-            dfsHelper(res, visited, neighbor);
+        visited.add(v);
+        res.add(v);
+        for(Edge<K, V, W> neighbor: adjacencyList.get(v))
+            dfsHelper(res, visited, neighbor.to);
     }
 
-    public List<Node<K, V>> bfs(Node<K, V> node) {
-        Set<Node<K, V>> visited = new HashSet<>();
+    public List<Vertex<K, V>> bfs(Vertex<K, V> vertex) {
+        Set<Vertex<K, V>> visited = new HashSet<>();
         // bfs result
-        List<Node<K, V>> res = new ArrayList<>();
-        bfsHelper(res, visited, node);
-        // make sure all disconnected node has also been visited
-        for(Node<K, V> n : vertices) {
-            if(!visited.contains(n))
-                bfsHelper(res, visited, n);
+        List<Vertex<K, V>> res = new ArrayList<>();
+        bfsHelper(res, visited, vertex);
+        // make sure all disconnected vertex has also been visited
+        for(Vertex<K, V> v : vertices) {
+            if(!visited.contains(v))
+                bfsHelper(res, visited, v);
         }
         return res;
     }
 
-    private void bfsHelper(List<Node<K, V>> res, Set<Node<K, V>> visited,  Node<K, V> node) {
-        Queue<Node<K, V>> q = new LinkedList<>();
-        q.offer(node);
-        visited.add(node);
+    private void bfsHelper(List<Vertex<K, V>> res, Set<Vertex<K, V>> visited,  Vertex<K, V> vertex) {
+        Queue<Vertex<K, V>> q = new LinkedList<>();
+        q.offer(vertex);
+        visited.add(vertex);
         while(!q.isEmpty()) {
             int size = q.size();
             for(int i = 0; i < size; i++) {
-                Node<K, V> n = q.poll();
-                res.add(n);
-                for(Node<K,V> neighbor: adjacencyList.get(n)) {
-                    if(visited.contains(neighbor)) continue;
-                    q.offer(neighbor);
-                    visited.add(neighbor);
+                Vertex<K, V> v = q.poll();
+                res.add(v);
+                for(Edge<K, V,W> neighbor: adjacencyList.get(v)) {
+                    if(visited.contains(neighbor.to)) continue;
+                    q.offer(neighbor.to);
+                    visited.add(neighbor.to);
                 }
             }
         }
@@ -106,7 +107,7 @@ public abstract class Graph<K,V> {
 
     public abstract  boolean containsCycle();
 
-    public abstract void addEdge(Node<K, V> from, Node<K, V> to);
+    public abstract void addEdge(Vertex<K, V> from, Vertex<K, V> to, W w);
 
-    public abstract void removeEdge(Node<K, V> from, Node<K, V> to);
+    public abstract void removeEdge(Vertex<K, V> from, Vertex<K, V> to);
 }

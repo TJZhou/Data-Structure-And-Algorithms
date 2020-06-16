@@ -10,7 +10,7 @@ import java.util.Set;
  * @param <K> Key
  * @param <V> Value
  */
-public class UnDirectedGraph<K, V> extends Graph<K, V> {
+public class UnDirectedGraph<K, V, W> extends Graph<K, V, W> {
 
     public UnDirectedGraph() {
         super();
@@ -18,23 +18,23 @@ public class UnDirectedGraph<K, V> extends Graph<K, V> {
 
     public int edgeNum() {
         int sum = 0;
-        for(List<Node<K,V>> l : adjacencyList.values())
+        for(List<Edge<K, V, W>> l : adjacencyList.values())
             sum += l.size();
         return sum / 2;
     }
 
-    public void addEdge(Node<K, V> from, Node<K, V> to) {
+    public void addEdge(Vertex<K, V> from, Vertex<K, V> to, W w) {
         if(!vertices.contains(from))
             addVertex(from);
         if(!vertices.contains(to))
             addVertex(to);
-        adjacencyList.get(from).add(to);
-        adjacencyList.get(to).add(from);
+        adjacencyList.get(from).add(new Edge<>(from, to, w));
+        adjacencyList.get(to).add(new Edge<>(to, from, w));
     }
 
-    public void removeEdge(Node<K, V> from, Node<K, V> to) {
-        adjacencyList.get(from).remove(to);
-        adjacencyList.get(to).remove(from);
+    public void removeEdge(Vertex<K, V> from, Vertex<K, V> to) {
+        adjacencyList.get(from).removeIf(e -> e.to == to);
+        adjacencyList.get(to).removeIf(e -> e.from == from);
     }
 
     /**
@@ -42,22 +42,22 @@ public class UnDirectedGraph<K, V> extends Graph<K, V> {
      * https://www.youtube.com/watch?v=n_t0a_8H8VY
      */
     public boolean containsCycle() {
-        Set<Node<K, V>> visited = new HashSet<>();
-        for(Node<K, V> node : vertices) {
-            if(visited.contains(node))
+        Set<Vertex<K, V>> visited = new HashSet<>();
+        for(Vertex<K, V> vertex : vertices) {
+            if(visited.contains(vertex))
                 continue;
-            if(cycleDetect(visited, node, null))
+            if(cycleDetect(visited, vertex, null))
                 return true;
         }
         return false;
     }
 
-    private boolean cycleDetect(Set<Node<K, V>> visited, Node<K, V> node, Node<K, V> parent) {
-        visited.add(node);
-        for(Node<K, V> n : adjacencyList.get(node)) {
-            if(n == parent)
+    private boolean cycleDetect(Set<Vertex<K, V>> visited, Vertex<K, V> vertex, Vertex<K, V> parent) {
+        visited.add(vertex);
+        for(Edge<K, V, W> e : adjacencyList.get(vertex)) {
+            if(e.to == parent)
                 continue;
-            if(visited.contains(n) || cycleDetect(visited, n, node))
+            if(visited.contains(e.to) || cycleDetect(visited, e.to, vertex))
                 return true;
         }
         return false;
