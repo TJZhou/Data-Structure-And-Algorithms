@@ -16,8 +16,6 @@ public class RadixSort {
 
     private static void countSort(int[] elements, int n) {
         LinkedList<Integer>[] lists = new LinkedList[10];
-
-
         for(int ele : elements) {
             int i = ele / n % 10;
             if(lists[i] == null)

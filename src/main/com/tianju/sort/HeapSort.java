@@ -33,19 +33,19 @@ public class HeapSort {
     /**
      *
      * @param elements: array need to be sorted
-     * @param comparator:
+     * @param c: Comparator
      * @param idx: Index in the array. In Heapify process, it decreases from size/2 - 1 to 0. In sort process, it's always 0.
      * @param len: Unsorted length.
      * @param <T>: Generic Type
      */
-    private static <T> void siftDown(T[] elements, Comparator<? super T> comparator, int idx, int len) {
+    private static <T> void siftDown(T[] elements, Comparator<? super T> c, int idx, int len) {
         T t = elements[idx];
         int half = len >> 1;
         while(idx < half) {
             int left = (idx << 1) + 1, right = (idx << 1) + 2, child = left;
-            if(right < len && comparator.compare(elements[left], elements[right]) < 0)
+            if(right < len && c.compare(elements[left], elements[right]) < 0)
                 child = right;
-            if(comparator.compare(t, elements[child]) > 0)
+            if(c.compare(t, elements[child]) > 0)
                 break;
             Util.swap(elements, idx, child);
             idx = child;

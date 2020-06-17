@@ -5,12 +5,13 @@ package com.tianju.graph;
  * Jun 15, 2020
  * @param <K> Vertex Key
  * @param <V> Vertex Value
- * @param <W> Edge Weight
  */
-public class Edge<K, V, W> {
+public class Edge<K, V> {
+
     Vertex<K, V> from, to;
-    W w;
-    public Edge(Vertex<K, V> from, Vertex<K, V> to, W w) {
+    double w;
+
+    public Edge(Vertex<K, V> from, Vertex<K, V> to, double w) {
         this.from = from;
         this.to = to;
         this.w = w;

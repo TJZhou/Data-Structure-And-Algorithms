@@ -1,7 +1,6 @@
 package com.tianju.graph;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -10,31 +9,35 @@ import java.util.Set;
  * @param <K> Key
  * @param <V> Value
  */
-public class UnDirectedGraph<K, V, W> extends Graph<K, V, W> {
+public class AdjacencyListUndirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
 
-    public UnDirectedGraph() {
+    public AdjacencyListUndirectedGraph() {
         super();
     }
 
     public int edgeNum() {
         int sum = 0;
-        for(List<Edge<K, V, W>> l : adjacencyList.values())
-            sum += l.size();
+        for(Vertex<K, V> v : vertices)
+            sum += v.adjacencyList.size();
         return sum / 2;
     }
 
-    public void addEdge(Vertex<K, V> from, Vertex<K, V> to, W w) {
+    public void addEdge(Vertex<K, V> from, Vertex<K, V> to, double w) {
+        from.indegree++;
+        to.indegree++;
         if(!vertices.contains(from))
             addVertex(from);
         if(!vertices.contains(to))
             addVertex(to);
-        adjacencyList.get(from).add(new Edge<>(from, to, w));
-        adjacencyList.get(to).add(new Edge<>(to, from, w));
+        from.adjacencyList.add(new Edge<>(from, to, w));
+        to.adjacencyList.add(new Edge<>(to, from, w));
     }
 
     public void removeEdge(Vertex<K, V> from, Vertex<K, V> to) {
-        adjacencyList.get(from).removeIf(e -> e.to == to);
-        adjacencyList.get(to).removeIf(e -> e.from == from);
+        from.indegree--;
+        to.indegree--;
+        from.adjacencyList.removeIf(e -> e.to == to);
+        to.adjacencyList.removeIf(e -> e.from == from);
     }
 
     /**
@@ -53,11 +56,16 @@ public class UnDirectedGraph<K, V, W> extends Graph<K, V, W> {
     }
 
     private boolean cycleDetect(Set<Vertex<K, V>> visited, Vertex<K, V> vertex, Vertex<K, V> parent) {
+        if(visited.contains(vertex))
+            return true;
         visited.add(vertex);
-        for(Edge<K, V, W> e : adjacencyList.get(vertex)) {
+        for(Edge<K, V> e : vertex.adjacencyList) {
+            // the vertex has self contained cycle
+            if(e.from == e.to)
+                return true;
             if(e.to == parent)
                 continue;
-            if(visited.contains(e.to) || cycleDetect(visited, e.to, vertex))
+            if(cycleDetect(visited, e.to, vertex))
                 return true;
         }
         return false;
