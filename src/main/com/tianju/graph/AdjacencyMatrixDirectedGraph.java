@@ -59,6 +59,7 @@ public class AdjacencyMatrixDirectedGraph extends AdjacencyMatrixGraph {
         return false;
     }
 
+    // topological sort only applies for DAG (Directed Acyclic Graph)
     public List<Integer> topologicalSort() {
         if(containsCycle())
             throw new IllegalArgumentException("Cannot sort graph with cycle");
@@ -88,5 +89,33 @@ public class AdjacencyMatrixDirectedGraph extends AdjacencyMatrixGraph {
             }
         }
         return res;
+    }
+
+    public int shortestDistance(int src, int dst) {
+        int[] dist = new int[V];
+        int[] prev = new int[V];
+        PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>(Map.Entry.comparingByValue());
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        Arrays.fill(prev, -1);
+        dist[src] = 0;
+        for(int i = 0; i < V; i++)
+            pq.offer(new AbstractMap.SimpleEntry<>(i, dist[i]));
+        while(!pq.isEmpty()) {
+            int minDist = pq.peek().getValue();
+            int v = pq.poll().getKey();
+            for(int i = 0; i < V; i++) {
+                if(v == i || adjacencyMatrix[v][i] == null)
+                    continue;
+                int temp = minDist + adjacencyMatrix[v][i];
+                if(temp < dist[i]) {
+                    dist[i] = temp;
+                    prev[i] = v;
+                    int finalI = i;
+                    pq.removeIf(e -> e.getKey() == finalI);
+                    pq.offer(new AbstractMap.SimpleEntry<>(i, temp));
+                }
+            }
+        }
+        return dist[dst];
     }
 }

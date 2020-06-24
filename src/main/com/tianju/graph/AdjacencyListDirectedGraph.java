@@ -70,6 +70,7 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
         return false;
     }
 
+    // topological sort only applies for DAG (Directed Acyclic Graph)
     public Collection<Vertex<K, V>> topologicalSort() {
         if(containsCycle())
             throw new IllegalArgumentException("Cannot sort graph with cycle");
@@ -100,5 +101,31 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
             }
         }
         return res;
+    }
+
+    public double shortestDistance(Vertex<K, V> src, Vertex<K, V> dst) {
+        Map<Vertex<K, V>, Double> dist = new HashMap<>();
+        Map<Vertex<K, V>, Vertex<K, V>> prev = new HashMap<>();
+        PriorityQueue<Map.Entry<Vertex<K, V>, Double>> pq = new PriorityQueue<>(Map.Entry.comparingByValue());
+        for(Vertex<K, V> vertex : vertices)
+            dist.put(vertex, Double.MAX_VALUE);
+        dist.put(src, 0.0);
+        for(Map.Entry<Vertex<K, V>, Double> e : dist.entrySet())
+            pq.offer(e);
+        while(!pq.isEmpty()) {
+            double minDist = pq.peek().getValue();
+            Vertex<K, V> v = pq.poll().getKey();
+            for(Edge<K, V> edge : v.adjacencyList) {
+                assert edge.from == v;
+                double temp = minDist + edge.w;
+                if(temp < dist.get(edge.to)) {
+                    pq.removeIf(e -> e.getKey() == edge.to);
+                    dist.put(edge.to, temp);
+                    prev.put(edge.to, edge.from);
+                    pq.offer(new AbstractMap.SimpleEntry<>(edge.to, temp));
+                }
+            }
+        }
+        return dist.get(dst);
     }
 }

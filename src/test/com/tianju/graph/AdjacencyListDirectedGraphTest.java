@@ -73,4 +73,30 @@ public class AdjacencyListDirectedGraphTest {
         g.addEdge(e6);
         Assertions.assertThrows(IllegalArgumentException.class, g::topologicalSort);
     }
+
+    @Test
+    public void dijkstraTest() {
+        AdjacencyListDirectedGraph<Integer, Integer> g = new AdjacencyListDirectedGraph<>();
+        Vertex<Integer, Integer> v1 = new Vertex<>(1, 1);
+        Vertex<Integer, Integer> v2 = new Vertex<>(2, 2);
+        Vertex<Integer, Integer> v3 = new Vertex<>(3, 3);
+        Vertex<Integer, Integer> v4 = new Vertex<>(4, 4);
+        Vertex<Integer, Integer> v5 = new Vertex<>(5, 5);
+        Vertex<Integer, Integer> v6 = new Vertex<>(6, 6);
+
+        Edge<Integer, Integer> e1 = new Edge<>(v1, v2, 1);
+        Edge<Integer, Integer> e2 = new Edge<>(v1, v3, 3);
+        Edge<Integer, Integer> e3 = new Edge<>(v1, v4, 2);
+        Edge<Integer, Integer> e4 = new Edge<>(v2, v3, 1);
+        Edge<Integer, Integer> e5 = new Edge<>(v2, v5, 3);
+        Edge<Integer, Integer> e6 = new Edge<>(v2, v6, 4);
+        Edge<Integer, Integer> e7 = new Edge<>(v3, v6, 2);
+
+        g.addVertices(Arrays.asList(v1, v2, v3, v4, v5, v6));
+        g.addEdges(Arrays.asList(e1, e2, e3, e4, e5, e6, e7));
+
+        Assertions.assertEquals(g.shortestDistance(v2, v1), Double.MAX_VALUE);
+        Assertions.assertEquals(g.shortestDistance(v2, v6), 3);
+        Assertions.assertEquals(g.shortestDistance(v1, v6), 4);
+    }
 }

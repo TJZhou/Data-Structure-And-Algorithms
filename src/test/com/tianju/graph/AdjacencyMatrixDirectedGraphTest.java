@@ -48,4 +48,20 @@ public class AdjacencyMatrixDirectedGraphTest {
         g.addEdge(0, 5, 0);
         Assertions.assertThrows(IllegalArgumentException.class, g::topologicalSort);
     }
+
+    @Test
+    public void dijkstraTest() {
+        AdjacencyMatrixDirectedGraph g = new AdjacencyMatrixDirectedGraph(7);
+        g.addEdge(1, 2, 1);
+        g.addEdge(1, 3, 3);
+        g.addEdge(1, 4, 2);
+        g.addEdge(2, 3, 1);
+        g.addEdge(2, 5, 3);
+        g.addEdge(2, 6, 4);
+        g.addEdge(3, 6, 2);
+
+        Assertions.assertEquals(g.shortestDistance(2, 1), Integer.MAX_VALUE);
+        Assertions.assertEquals(g.shortestDistance(1, 3), 2);
+        Assertions.assertEquals(g.shortestDistance(1, 6), 4);
+    }
 }

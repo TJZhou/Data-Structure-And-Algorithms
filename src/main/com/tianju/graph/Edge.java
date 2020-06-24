@@ -6,7 +6,7 @@ package com.tianju.graph;
  * @param <K> Vertex Key
  * @param <V> Vertex Value
  */
-public class Edge<K, V> {
+class Edge<K, V> {
 
     Vertex<K, V> from, to;
     double w;
