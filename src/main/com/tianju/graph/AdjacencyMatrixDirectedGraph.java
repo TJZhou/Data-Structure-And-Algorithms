@@ -91,14 +91,50 @@ public class AdjacencyMatrixDirectedGraph extends AdjacencyMatrixGraph {
         return res;
     }
 
+    /**
+     * Refer to: https://algorithms.tutorialhorizon.com/djkstras-shortest-path-algorithm-adjacency-matrix-java-code/
+     * @param dist minimum distance array
+     * @param findMin to mark the vertex which has already find the minimum distance
+     * @return vertex which has the minimum distance and is not in the findMin array
+     */
+    private int getMinVertex(int[] dist, boolean[] findMin) {
+        int min = Integer.MAX_VALUE;
+        int vertex = -1;
+        for(int i = 0; i < V; i++) {
+            if(!findMin[i] && dist[i] < min) {
+                min = dist[i];
+                vertex = i;
+            }
+        }
+        return vertex;
+    }
+
     public int shortestDistance(int src, int dst) {
         int[] dist = new int[V];
         int[] prev = new int[V];
-        PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>(Map.Entry.comparingByValue());
+        boolean[] findMin = new boolean[V];
         Arrays.fill(dist, Integer.MAX_VALUE);
         Arrays.fill(prev, -1);
         dist[src] = 0;
-        for(int i = 0; i < V; i++)
+        for(int i = 0; i < V; i++) {
+            int vertex = getMinVertex(dist, findMin);
+            if(vertex == -1) break;
+            findMin[vertex] = true;
+            for(int j = 0; j < V; j++) {
+                if(i == j || adjacencyMatrix[vertex][j] == null)
+                    continue;
+                int tempDist = dist[vertex] + adjacencyMatrix[vertex][j];
+                if(tempDist < dist[j]) {
+                    dist[j] = tempDist;
+                    prev[j] = vertex;
+                }
+            }
+        }
+        return dist[dst];
+    }
+
+    /* implementation with priority queue
+            for(int i = 0; i < V; i++)
             pq.offer(new AbstractMap.SimpleEntry<>(i, dist[i]));
         while(!pq.isEmpty()) {
             int minDist = pq.peek().getValue();
@@ -116,6 +152,5 @@ public class AdjacencyMatrixDirectedGraph extends AdjacencyMatrixGraph {
                 }
             }
         }
-        return dist[dst];
-    }
+     */
 }

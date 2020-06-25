@@ -103,6 +103,7 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
         return res;
     }
 
+    // dijkstra algorithm only applies for graph which doesn't have negative weighted edge
     public double shortestDistance(Vertex<K, V> src, Vertex<K, V> dst) {
         Map<Vertex<K, V>, Double> dist = new HashMap<>();
         Map<Vertex<K, V>, Vertex<K, V>> prev = new HashMap<>();
@@ -110,8 +111,8 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
         for(Vertex<K, V> vertex : vertices)
             dist.put(vertex, Double.MAX_VALUE);
         dist.put(src, 0.0);
-        for(Map.Entry<Vertex<K, V>, Double> e : dist.entrySet())
-            pq.offer(e);
+        for(Map.Entry<Vertex<K, V>, Double> entry : dist.entrySet())
+            pq.offer(entry);
         while(!pq.isEmpty()) {
             double minDist = pq.peek().getValue();
             Vertex<K, V> v = pq.poll().getKey();
