@@ -109,7 +109,8 @@ public class AdjacencyMatrixDirectedGraph extends AdjacencyMatrixGraph {
         return vertex;
     }
 
-    public int shortestDistance(int src, int dst) {
+    // dijkstra
+    public int shortestDistance1(int src, int dst) {
         int[] dist = new int[V];
         int[] prev = new int[V];
         boolean[] findMin = new boolean[V];
@@ -133,7 +134,7 @@ public class AdjacencyMatrixDirectedGraph extends AdjacencyMatrixGraph {
         return dist[dst];
     }
 
-    /* implementation with priority queue
+    /* implementation dijkstra with adjacency matrix and priority queue
             for(int i = 0; i < V; i++)
             pq.offer(new AbstractMap.SimpleEntry<>(i, dist[i]));
         while(!pq.isEmpty()) {
@@ -153,4 +154,35 @@ public class AdjacencyMatrixDirectedGraph extends AdjacencyMatrixGraph {
             }
         }
      */
+
+    // bellman ford
+    public int shortestDistance2(int src, int dst) {
+        int[] dist = new int[V];
+        int[] prev = new int[V];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        Arrays.fill(prev, -1);
+        dist[src] = 0;
+        for(int i = 0; i < V; i++)
+            updateDist(dist, prev);
+        // check one more time, if the path length is still decrease then there must be a negative cycle
+        if(updateDist(dist, prev))
+            throw new IllegalArgumentException("Graph contains negative cycle. Shortest path doesn't exist!");
+        return dist[dst];
+    }
+
+    private boolean updateDist(int[] dist, int[] prev) {
+        boolean findShorterPath = false;
+        for(int i = 0; i < V; i++) {
+            for(int j = 0; j < V; j++) {
+                if(i == j || adjacencyMatrix[i][j] == null || dist[i] == Integer.MAX_VALUE)
+                    continue;
+                if(dist[j] > dist[i] + adjacencyMatrix[i][j]) {
+                    dist[j] = dist[i] + adjacencyMatrix[i][j];
+                    prev[j] = i;
+                    findShorterPath = true;
+                }
+            }
+        }
+        return findShorterPath;
+    }
 }

@@ -104,7 +104,7 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
     }
 
     // dijkstra algorithm only applies for graph which doesn't have negative weighted edge
-    public double shortestDistance(Vertex<K, V> src, Vertex<K, V> dst) {
+    public double shortestDistance1(Vertex<K, V> src, Vertex<K, V> dst) {
         Map<Vertex<K, V>, Double> dist = new HashMap<>();
         Map<Vertex<K, V>, Vertex<K, V>> prev = new HashMap<>();
         PriorityQueue<Map.Entry<Vertex<K, V>, Double>> pq = new PriorityQueue<>(Map.Entry.comparingByValue());
@@ -128,5 +128,37 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
             }
         }
         return dist.get(dst);
+    }
+
+    // Bellman ford algorithm. Will report graph which has negative cycle
+    public double shortestDistance2(Vertex<K, V> src, Vertex<K, V> dst) {
+        Map<Vertex<K, V>, Double> dist = new HashMap<>();
+        Map<Vertex<K, V>, Vertex<K, V>> prev = new HashMap<>();
+        for(Vertex<K, V> vertex : vertices)
+            dist.put(vertex, Double.MAX_VALUE);
+        dist.put(src, 0.0);
+        for(int i = 0; i < vertices.size(); i++)
+            updateDist(dist, prev);
+        // check one more time, if the path length is still decrease then there must be a negative cycle
+        if(updateDist(dist, prev))
+            throw new IllegalArgumentException("Graph contains negative cycle. Shortest path doesn't exist!");
+        return dist.get(dst);
+    }
+
+    private boolean updateDist(Map<Vertex<K, V>, Double> dist, Map<Vertex<K, V>, Vertex<K, V>> prev) {
+        boolean findShorterPath = false;
+        for(Vertex<K, V> v : vertices) {
+            for(Edge<K, V> e : v.adjacencyList) {
+                // the edge must start from vertex v
+                assert e.from == v;
+                // avoid overflow
+                if(dist.get(v) != Double.MAX_VALUE && dist.get(e.to) > dist.get(v) + e.w) {
+                    dist.put(e.to, dist.get(v) + e.w);
+                    prev.put(e.to, v);
+                    findShorterPath = true;
+                }
+            }
+        }
+        return findShorterPath;
     }
 }
