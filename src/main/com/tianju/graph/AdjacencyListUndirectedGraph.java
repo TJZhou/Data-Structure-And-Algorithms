@@ -1,7 +1,6 @@
 package com.tianju.graph;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Tianju Zhou
@@ -69,5 +68,33 @@ public class AdjacencyListUndirectedGraph<K, V> extends AdjacencyListGraph<K, V>
                 return true;
         }
         return false;
+    }
+
+    public Map<Vertex<K, V>, Vertex<K, V>> minimumSpanningTree(Vertex<K, V> src) {
+        Map<Vertex<K, V>, Vertex<K, V>> prev = new HashMap<>();
+        Map<Vertex<K, V>, Double> costs = new HashMap<>();
+        PriorityQueue<Map.Entry<Vertex<K, V>, Double>> pq = new PriorityQueue<>(Map.Entry.comparingByValue());
+        for(Vertex<K, V> v : vertices)
+            costs.put(v, Double.MAX_VALUE);
+        costs.put(src, 0.0);
+        for(Map.Entry<Vertex<K, V>, Double> e : costs.entrySet())
+            pq.offer(e);
+        while(!pq.isEmpty()){
+            Vertex<K, V> v = pq.poll().getKey();
+            for(Edge<K, V> edge : v.adjacencyList) {
+                assert edge.from == v;
+                // if the vertex is selected than continue
+                if(prev.get(edge.to) != null)
+                    continue;
+                double cost = costs.get(edge.from) + edge.w;
+                if(costs.get(edge.to) > cost) {
+                    costs.put(edge.to, cost);
+                    prev.put(edge.to, edge.from);
+                    pq.removeIf(e -> e.getKey() == edge.to);
+                    pq.offer(new AbstractMap.SimpleEntry<>(edge.to, cost));
+                }
+            }
+        }
+        return prev;
     }
 }

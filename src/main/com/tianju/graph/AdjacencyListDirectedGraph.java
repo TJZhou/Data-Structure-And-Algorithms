@@ -113,14 +113,15 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
         dist.put(src, 0.0);
         for(Map.Entry<Vertex<K, V>, Double> entry : dist.entrySet())
             pq.offer(entry);
-        while(!pq.isEmpty()) {
+        for(int i = 0; i < vertices.size() - 1; i++) {
             double minDist = pq.peek().getValue();
             Vertex<K, V> v = pq.poll().getKey();
             for(Edge<K, V> edge : v.adjacencyList) {
                 assert edge.from == v;
                 double temp = minDist + edge.w;
                 if(temp < dist.get(edge.to)) {
-                    pq.removeIf(e -> e.getKey() == edge.to);
+                    // actually we can simply insert an object with same key but lower value
+                    // pq.removeIf(e -> e.getKey() == edge.to);
                     dist.put(edge.to, temp);
                     prev.put(edge.to, edge.from);
                     pq.offer(new AbstractMap.SimpleEntry<>(edge.to, temp));
