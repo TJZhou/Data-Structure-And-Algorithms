@@ -3,7 +3,9 @@ package com.tianju.graph;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,9 +59,25 @@ public class AdjacencyListUndirectedGraphTest {
         AdjacencyListUndirectedGraph<Integer, Integer> g = new AdjacencyListUndirectedGraph<>();
         g.addVertices(Arrays.asList(v1, v2, v3, v4, v5, v6));
         g.addEdges(Arrays.asList(e1, e2, e3, e4, e5, e6, e7));
-        Map<Vertex<Integer, Integer>, Vertex<Integer, Integer>> prev = g.minimumSpanningTree(v1);
+        Map<Vertex<Integer, Integer>, Vertex<Integer, Integer>> prev = g.minimumSpanningTree1(v1);
+        Assertions.assertEquals(prev.size(), 6);
         Assertions.assertNull(prev.get(v1));
         Assertions.assertEquals(prev.get(v5), v2);
         Assertions.assertEquals(prev.get(v2), v1);
+    }
+
+    @Test
+    public void kruskalTest() {
+        AdjacencyListUndirectedGraph<Integer, Integer> g = new AdjacencyListUndirectedGraph<>();
+        g.addVertices(Arrays.asList(v1, v2, v3, v4, v5, v6));
+        g.addEdges(Arrays.asList(e1, e2, e3, e4, e5, e6, e7));
+        List<Edge<Integer, Integer>> edgeList = g.minimumSpanningTree2();
+        Assertions.assertEquals(edgeList.size(), 5);
+        Assertions.assertEquals(edgeList.get(0).w, 1);
+        Assertions.assertEquals(edgeList.get(1).w, 2);
+        Assertions.assertEquals(edgeList.get(2).w, 3);
+        Assertions.assertEquals(edgeList.get(3).w, 5);
+        Assertions.assertEquals(edgeList.get(4).w, 6);
+
     }
 }

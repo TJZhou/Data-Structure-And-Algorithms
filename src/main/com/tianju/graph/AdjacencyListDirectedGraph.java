@@ -107,21 +107,21 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
     public double shortestDistance1(Vertex<K, V> src, Vertex<K, V> dst) {
         Map<Vertex<K, V>, Double> dist = new HashMap<>();
         Map<Vertex<K, V>, Vertex<K, V>> prev = new HashMap<>();
+        Set<Vertex<K, V>> visited = new HashSet<>();
         PriorityQueue<Map.Entry<Vertex<K, V>, Double>> pq = new PriorityQueue<>(Map.Entry.comparingByValue());
         for(Vertex<K, V> vertex : vertices)
             dist.put(vertex, Double.MAX_VALUE);
         dist.put(src, 0.0);
-        for(Map.Entry<Vertex<K, V>, Double> entry : dist.entrySet())
-            pq.offer(entry);
-        for(int i = 0; i < vertices.size() - 1; i++) {
+        pq.offer(new AbstractMap.SimpleEntry<>(src, 0.0));
+        while(!pq.isEmpty()) {
             double minDist = pq.peek().getValue();
             Vertex<K, V> v = pq.poll().getKey();
+            visited.add(v);
             for(Edge<K, V> edge : v.adjacencyList) {
                 assert edge.from == v;
+                if(visited.contains(edge.to)) continue;
                 double temp = minDist + edge.w;
                 if(temp < dist.get(edge.to)) {
-                    // actually we can simply insert an object with same key but lower value
-                    // pq.removeIf(e -> e.getKey() == edge.to);
                     dist.put(edge.to, temp);
                     prev.put(edge.to, edge.from);
                     pq.offer(new AbstractMap.SimpleEntry<>(edge.to, temp));
