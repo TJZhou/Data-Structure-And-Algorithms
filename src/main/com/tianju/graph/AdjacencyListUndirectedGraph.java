@@ -117,28 +117,21 @@ public class AdjacencyListUndirectedGraph<K, V> extends AdjacencyListGraph<K, V>
         // initialize disjoint set. At beginning, each set only has one vertex (each node is a set)
         for(Vertex<K, V> v : vertices)
             disjointSet.put(v, v);
-        int counter = 1;
-        while (!pq.isEmpty() && counter < vertices.size()) {
+        while (!pq.isEmpty()) {
             Edge<K, V> e = pq.poll();
             // use Union-Find Algorithm to detect cycle
-            if (find(disjointSet, e.from) == find(disjointSet, e.to))
+            Vertex<K, V> group1 = find(disjointSet,e.from);
+            Vertex<K, V> group2 = find(disjointSet, e.to);
+            if (group1 == group2)
                 continue;
-            counter++;
-            union(disjointSet, e.from, e.to);
+            disjointSet.put(group1, group2);
             res.add(e);
         }
         return res;
     }
 
-    private void union(Map<Vertex<K, V>, Vertex<K, V>> disjointSet, Vertex<K, V> from, Vertex<K, V> to) {
-        Vertex<K, V> fromSet = find(disjointSet, from);
-        Vertex<K, V> toSet = find(disjointSet, to);
-        if(fromSet != toSet)
-            disjointSet.put(to, from);
-    }
-
     private Vertex<K, V> find(Map<Vertex<K, V>, Vertex<K, V>> disjointSet, Vertex<K, V> v) {
-        while(disjointSet.get(v) != v) {
+        while(v != disjointSet.get(v)) {
             // path compression
             disjointSet.put(disjointSet.get(v), disjointSet.get(disjointSet.get(v)));
             v = disjointSet.get(v);
