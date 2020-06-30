@@ -138,8 +138,11 @@ public class AdjacencyListUndirectedGraph<K, V> extends AdjacencyListGraph<K, V>
     }
 
     private Vertex<K, V> find(Map<Vertex<K, V>, Vertex<K, V>> disjointSet, Vertex<K, V> v) {
-        while(disjointSet.get(v) != v)
+        while(disjointSet.get(v) != v) {
+            // path compression
+            disjointSet.put(disjointSet.get(v), disjointSet.get(disjointSet.get(v)));
             v = disjointSet.get(v);
+        }
         return v;
     }
 }

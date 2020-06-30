@@ -72,6 +72,9 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
 
     // topological sort only applies for DAG (Directed Acyclic Graph)
     public Collection<Vertex<K, V>> topologicalSort() {
+        // we can also directly use topologicalSort to detect cycle.
+        // if the queue loop is less than vertices times, than there must be a cycle
+        // see post on leetCode https://leetcode.com/problems/course-schedule/discuss/58516/Easy-BFS-Topological-sort-Java
         if(containsCycle())
             throw new IllegalArgumentException("Cannot sort graph with cycle");
         List<Vertex<K, V>> res = new ArrayList<>();
@@ -84,7 +87,6 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
                 indegreeMap.put(v, v.indegree);
             }
         }
-
         while(!q.isEmpty()) {
             int size = q.size();
             for(int i = 0; i < size; i++) {
