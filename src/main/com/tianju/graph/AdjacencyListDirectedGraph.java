@@ -140,7 +140,7 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
         for(Vertex<K, V> vertex : vertices)
             dist.put(vertex, Double.MAX_VALUE);
         dist.put(src, 0.0);
-        for(int i = 0; i < vertices.size(); i++)
+        for(int i = 0; i < vertices.size() - 1; i++)
             updateDist(dist, prev);
         // check one more time, if the path length is still decrease then there must be a negative cycle
         if(updateDist(dist, prev))
