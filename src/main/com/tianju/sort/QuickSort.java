@@ -36,4 +36,27 @@ public class QuickSort {
         partitionHelper(elements, left, r, c);
         partitionHelper(elements, l, right, c);
     }
+
+    // another way to implement quick sort
+    public static <T extends Comparable<? super T>> void quickSort2(T[] elements) {
+        quickSortHelper2(elements, 0, elements.length - 1, Comparator.naturalOrder());
+    }
+
+    private static <T> void quickSortHelper2(T[] elements, int lo, int hi, Comparator<? super T> c) {
+        if(lo >= hi) return;
+        int pivot = partitionHelper2(elements, lo, hi, c);
+        quickSortHelper2(elements, lo, pivot - 1, c);
+        quickSortHelper2(elements, pivot + 1, hi, c);
+    }
+
+    private static <T> int partitionHelper2(T[] elements, int lo, int hi, Comparator<? super T> c) {
+        T p = elements[hi];
+        int i = lo;
+        for(int j = lo; j < hi; j++) {
+            if(c.compare(p, elements[j]) > 0)
+                Util.swap(elements, i++, j);
+        }
+        Util.swap(elements, i, hi);
+        return i;
+    }
 }

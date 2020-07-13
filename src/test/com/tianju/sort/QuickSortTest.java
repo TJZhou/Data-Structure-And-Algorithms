@@ -19,7 +19,7 @@ public class QuickSortTest {
         Double[] testArr2 = Arrays.copyOf(testArr1, 1000000);
 
         Long start = System.currentTimeMillis();
-        QuickSort.quickSort(testArr1);
+        QuickSort.quickSort2(testArr1);
         Long end = System.currentTimeMillis();
         System.out.println("Quick Sort Time cost:" + (end-start));
         Arrays.sort(testArr2);
