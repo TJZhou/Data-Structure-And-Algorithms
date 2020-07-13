@@ -164,4 +164,58 @@ public class AdjacencyListDirectedGraph<K, V> extends AdjacencyListGraph<K, V> {
         }
         return findShorterPath;
     }
+
+    /**
+     * Use Kosaraju's algorithm to find strongly connected component
+     * @return  A list of strongly connected component sub-graphs
+     */
+    public List<List<Vertex<K, V>>> stronglyConnectedComponent() {
+        List<List<Vertex<K, V>>> res = new ArrayList<>();
+        Set<Vertex<K, V>> visited = new HashSet<>();
+        Map<Vertex<K,V>, List<Edge<K, V>>> reversedAdjacencyList = new HashMap<>();
+        Deque<Vertex<K, V>> stack = new LinkedList<>();
+
+        // build reversed adjacency list
+        for(Vertex<K, V> v : vertices) {
+            for(Edge<K, V> neighbor : v.adjacencyList) {
+                reversedAdjacencyList.putIfAbsent(neighbor.to, new LinkedList<>());
+                reversedAdjacencyList.get(neighbor.to).add(new Edge<>(neighbor.to, neighbor.from, neighbor.w));
+            }
+        }
+
+        // kosaraju's algorithm - first pass
+        for(Vertex<K, V> v : vertices) {
+            if(!visited.contains(v))
+                kosarajuHelper(v, visited, stack);
+        }
+
+        // kosaraju's algorithm - second pass after edge reversed
+        visited.clear();
+        while(!stack.isEmpty()) {
+            kosarajuHelperReversed(reversedAdjacencyList, stack.peek(), visited);
+            List<Vertex<K, V>> connectedComponent = new ArrayList<>();
+            while(!stack.isEmpty() && visited.contains(stack.peek()))
+                connectedComponent.add(stack.pop());
+            res.add(connectedComponent);
+        }
+        return res;
+    }
+
+    private void kosarajuHelper(
+            Vertex<K, V> v, Set<Vertex<K, V>> visited, Deque<Vertex<K, V>> stack) {
+        if(visited.contains(v))
+            return;
+        visited.add(v);
+        for(Edge<K, V> neighbor : v.adjacencyList)
+            kosarajuHelper(neighbor.to, visited, stack);
+        stack.push(v);
+    }
+
+    private void kosarajuHelperReversed(Map<Vertex<K,V>, List<Edge<K, V>>> reversedAdjacencyLis, Vertex<K, V> v, Set<Vertex<K, V>> visited) {
+        if(visited.contains(v))
+            return;
+        visited.add(v);
+        for(Edge<K, V> neighbor: reversedAdjacencyLis.get(v))
+            kosarajuHelperReversed(reversedAdjacencyLis, neighbor.to, visited);
+    }
 }

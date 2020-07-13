@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -88,5 +89,23 @@ public class AdjacencyListDirectedGraphTest {
 
         g.addEdge(new Edge<>(v3, v1, -10));
         Assertions.assertThrows(IllegalArgumentException.class, () -> g.shortestDistance2(v1, v3));
+    }
+
+    @Test
+    public void kosarajuTest() {
+        AdjacencyListDirectedGraph<Integer, Integer> g = new AdjacencyListDirectedGraph<>();
+        Edge<Integer, Integer> e1 = new Edge<>(v1, v2, 1);
+        Edge<Integer, Integer> e2 = new Edge<>(v2, v3, 2);
+        Edge<Integer, Integer> e3 = new Edge<>(v3, v1, 3);
+        Edge<Integer, Integer> e4 = new Edge<>(v2, v4, 4);
+        Edge<Integer, Integer> e5 = new Edge<>(v2, v6, 5);
+        Edge<Integer, Integer> e6 = new Edge<>(v4, v5, 6);
+        Edge<Integer, Integer> e7 = new Edge<>(v5, v4, 7);
+        g.addVertices(Arrays.asList(v1, v2, v3, v4, v5, v6));
+        g.addEdges(Arrays.asList(e1, e2, e3, e4, e5, e6, e7));
+        List<List<Vertex<Integer, Integer>>> connectedComponent = g.stronglyConnectedComponent();
+        Assertions.assertArrayEquals(connectedComponent.get(0).toArray(), new Vertex[] {v1, v2, v3});
+        Assertions.assertArrayEquals(connectedComponent.get(1).toArray(), new Vertex[] {v4, v5});
+        Assertions.assertArrayEquals(connectedComponent.get(2).toArray(), new Vertex[] {v6});
     }
 }
